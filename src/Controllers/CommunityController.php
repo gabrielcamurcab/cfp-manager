@@ -90,6 +90,33 @@ class CommunityController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+    public function getMy(Request $request, Response $response): Response
+    {
+        $userId = $request->getAttribute('userId');
+
+        if (!$userId) {
+            $response->getBody()->write(json_encode(['error' => 'Usuário não autenticado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $query = Community::join('users', 'users.id', '=', 'community.owner_id')
+            ->where('community.active', 1)
+            ->select(
+                'community.id',
+                'community.name',
+                'community.website',
+                'community.city',
+                'community.uf',
+                'community.tags',
+                'community.bio',
+            );
+
+        $data = $query->where('owner_id', $userId)->get()->first();
+
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
     public function update(Request $request, Response $response, array $args): Response
     {
         $userId = $request->getAttribute('userId');

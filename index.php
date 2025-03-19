@@ -15,6 +15,7 @@ $app->add(new CorsMiddleware());
 
 $app->group('/users', function (RouteCollectorProxy $group) {
     $group->post('/create', [UserController::class, 'create']);
+    $group->post('/login', [UserController::class, 'login']);
 });
 
 $app->get('/', function ($request, $response, $args) {

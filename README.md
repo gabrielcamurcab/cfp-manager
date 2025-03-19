@@ -14,5 +14,6 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
   - POST /user
   - POST /user/login
   - PUT /user
+  - PATCH /user/password
   - GET /user
   - POST /community

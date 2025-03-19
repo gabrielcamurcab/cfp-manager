@@ -130,6 +130,45 @@ class UserController
         }
     }
 
+    public function updatePassword(Request $request, Response $response): Response
+    {
+        $userId = $request->getAttribute('userId');
+
+        if (!$userId) {
+            $response->getBody()->write(json_encode(['error' => 'Usuário não autenticado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+
+        if (!isset($data["oldPassword"], $data["newPassword"]))
+        {
+            $response->getBody()->write(json_encode(['error' => 'Você deve informar a senha antiga e a senha nova.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try
+        {
+            $user = User::find($userId);
+            if(!password_verify($data["oldPassword"], $user->password))
+            {
+                $response->getBody()->write(json_encode(['error' => 'Senha antiga incorreta.']));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+            }
+
+            $user->password = password_hash($data["newPassword"], PASSWORD_BCRYPT);
+            $user->save();
+
+            $response->getBody()->write(json_encode(['message' => 'Senha atualizada com sucesso!']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Erro ao atualizar senha', 'details' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+
+    }
+
     public function getData(Request $request, Response $response): Response
     {
         $userId = $request->getAttribute('userId');

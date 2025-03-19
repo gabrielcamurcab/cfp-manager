@@ -19,6 +19,7 @@ $app->group('/user', function (RouteCollectorProxy $group) {
     $group->post('', [UserController::class, 'create']);
     $group->post('/login', [UserController::class, 'login']);
     $group->put('', [UserController::class, 'update'])->add(new JwtMiddleware());
+    $group->patch('/password', [UserController::class, 'updatePassword'])->add(new JwtMiddleware());
     $group->get('', [UserController::class, 'getData'])->add(new JwtMiddleware());
 });
 

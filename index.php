@@ -15,9 +15,10 @@ $app = AppFactory::create();
 $app->add(new CorsMiddleware());
 
 $app->group('/users', function (RouteCollectorProxy $group) {
-    $group->post('/create', [UserController::class, 'create']);
+    $group->post('', [UserController::class, 'create']);
     $group->post('/login', [UserController::class, 'login']);
-    $group->put('/update', [UserController::class, 'update'])->add(new JwtMiddleware());
+    $group->put('', [UserController::class, 'update'])->add(new JwtMiddleware());
+    $group->get('', [UserController::class, 'getData'])->add(new JwtMiddleware());
 });
 
 $app->get('/', function ($request, $response, $args) {

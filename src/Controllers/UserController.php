@@ -129,4 +129,26 @@ class UserController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }
+
+    public function getData(Request $request, Response $response): Response
+    {
+        $userId = $request->getAttribute('userId');
+
+        if (!$userId) {
+            $response->getBody()->write(json_encode(['error' => 'Usuário não autenticado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        try
+        {
+            $user = User::find($userId);
+
+            $response->getBody()->write(json_encode($user));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (\Exception $e)
+        {
+            $response->getBody()->write(json_encode(['error' => 'Erro ao buscar dados', 'details' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
 }

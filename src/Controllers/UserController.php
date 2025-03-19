@@ -89,13 +89,7 @@ class UserController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
 
-        // Use parsedBody em vez de getContents()
-        $data = $request->getParsedBody();
-
-        // Se estiver vazio, tente ler o corpo diretamente, mas apenas uma vez
-        if (empty($data)) {
-            $data = json_decode($request->getBody()->getContents(), true) ?? [];
-        }
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         if (empty($data)) {
             $response->getBody()->write(json_encode(['error' => 'Nenhum dado para atualizar']));
@@ -125,7 +119,7 @@ class UserController
             $user->save();
 
             $response->getBody()->write(json_encode([
-                'message' => 'Dados do usuário atualizados com sucesso',
+                'message' => 'Dados do usuário atualizados com sucesso'
             ]));
 
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

@@ -11,9 +11,12 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
 ## Fases Concluídas
 
 - Backend
-  - POST /user
-  - POST /user/login
-  - PUT /user
-  - PATCH /user/password
-  - GET /user
-  - POST /community
+  - User
+    - POST /user
+    - PUT /user
+    - PATCH /user/password
+    - GET /user
+  - Auth
+    - POST /auth/login
+  - Community
+    - POST /community

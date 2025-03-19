@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\UserController;
+use App\Controllers\AuthController;
 use App\Controllers\CommunityController;
 use App\Middleware\JwtMiddleware;
 
@@ -21,6 +22,10 @@ $app->group('/user', function (RouteCollectorProxy $group) {
     $group->put('', [UserController::class, 'update'])->add(new JwtMiddleware());
     $group->patch('/password', [UserController::class, 'updatePassword'])->add(new JwtMiddleware());
     $group->get('', [UserController::class, 'getData'])->add(new JwtMiddleware());
+});
+
+$app->group('/auth', function (RouteCollectorProxy $group) {
+    $group->post('/login', [AuthController::class, 'login']);
 });
 
 $app->group('/community', function (RouteCollectorProxy $group){

@@ -8,17 +8,22 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\UserController;
+use App\Controllers\CommunityController;
 use App\Middleware\JwtMiddleware;
 
 $app = AppFactory::create();
 
 $app->add(new CorsMiddleware());
 
-$app->group('/users', function (RouteCollectorProxy $group) {
+$app->group('/user', function (RouteCollectorProxy $group) {
     $group->post('', [UserController::class, 'create']);
     $group->post('/login', [UserController::class, 'login']);
     $group->put('', [UserController::class, 'update'])->add(new JwtMiddleware());
     $group->get('', [UserController::class, 'getData'])->add(new JwtMiddleware());
+});
+
+$app->group('/community', function (RouteCollectorProxy $group){
+    $group->post('', [CommunityController::class, 'create'])->add(new JwtMiddleware());
 });
 
 $app->get('/', function ($request, $response, $args) {

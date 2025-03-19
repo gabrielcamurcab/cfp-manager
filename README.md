@@ -11,7 +11,8 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
 ## Fases Concluídas
 
 - Backend
-  - POST /users
-  - POST /users/login
-  - PUT /users
-  - GET /users
+  - POST /user
+  - POST /user/login
+  - PUT /user
+  - GET /user
+  - POST /community

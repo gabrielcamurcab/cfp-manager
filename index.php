@@ -32,7 +32,8 @@ $app->group('/auth', function (RouteCollectorProxy $group) {
 $app->group('/community', function (RouteCollectorProxy $group){
     $group->post('', [CommunityController::class, 'create'])->add(new JwtMiddleware());
     $group->get('', [CommunityController::class, 'getAll']);
-    $group->get('/my', [CommunityController::class, 'getMy'])->add(new JwtMiddleware());
+    $group->get('/{id}', [CommunityController::class, 'getById']);
+    $group->get('/my/details', [CommunityController::class, 'getMy'])->add(new JwtMiddleware());
     $group->put('/{id}', [CommunityController::class, 'update'])->add(new JwtMiddleware());
 });
 

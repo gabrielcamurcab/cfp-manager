@@ -117,6 +117,36 @@ class CommunityController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+    public function getById(Request $request, Response $response): Response
+    {
+        $id = $request->getAttribute('id');
+
+        if (!$id) {
+            $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $query = Community::join('users', 'users.id', '=', 'community.owner_id')
+            ->where('community.active', 1)
+            ->select(
+                'community.id',
+                'community.name',
+                'community.website',
+                'community.city',
+                'community.uf',
+                'community.tags',
+                'community.bio',
+                'community.owner_id',
+                'users.name as owner_name',
+                'users.bio as owner_bio'
+            );
+
+        $data = $query->where('community.id', $id)->get()->first();
+
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
     public function update(Request $request, Response $response, array $args): Response
     {
         $userId = $request->getAttribute('userId');

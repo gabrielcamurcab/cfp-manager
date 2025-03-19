@@ -22,5 +22,6 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
   - Community
     - POST /community
     - GET /community (with search and paginate)
-    - GET /community/my
+    - GET /community/my/details
+    - GET /community/{id}
     - PUT /community/{id}

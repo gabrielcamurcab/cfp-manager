@@ -21,3 +21,4 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
     - POST /auth/refresh-token
   - Community
     - POST /community
+    - GET /community (with search and paginate)

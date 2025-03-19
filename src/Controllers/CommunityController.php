@@ -44,4 +44,49 @@ class CommunityController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }
+
+    public function getAll(Request $request, Response $response): Response
+    {
+        $page = $request->getQueryParams()["page"] ?? 1;
+        $search = $request->getQueryParams()["search"] ?? null;
+
+        $limit = 10;
+        $offset = $limit * ($page-1);
+
+        $query = Community::join('users', 'users.id', '=', 'community.owner_id')
+            ->where('community.active', 1)
+            ->select(
+                'community.id',
+                'community.owner_id',
+                'community.name',
+                'community.website',
+                'community.city',
+                'community.uf',
+                'community.tags',
+                'community.bio',
+                'users.name as owner_name' // Pegando o nome do owner
+            );
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('community.name', 'LIKE', "%{$search}%")
+                    ->orWhere('community.bio', 'LIKE', "%{$search}%")
+                    ->orWhere('users.name', 'LIKE', "%{$search}%"); // Permite buscar pelo nome do owner
+            });
+        }
+
+        $data = $query->limit($limit)->offset($offset)->get()->toArray();
+
+        $hasMore = Community::where('active', 1)
+            ->skip($offset + $limit)
+            ->take(1)
+            ->exists();
+
+        $response->getBody()->write(json_encode([
+            'data' => $data,
+            'page' => $page,
+            'hasMore' => $hasMore
+        ]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
 }

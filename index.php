@@ -6,10 +6,16 @@ use App\Middleware\CorsMiddleware;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Routing\RouteCollectorProxy;
+use App\Controllers\UserController;
 
 $app = AppFactory::create();
 
 $app->add(new CorsMiddleware());
+
+$app->group('/users', function (RouteCollectorProxy $group) {
+    $group->post('/create', [UserController::class, 'create']);
+});
 
 $app->get('/', function ($request, $response, $args) {
     $response->getBody()->write(json_encode(['message' => 'API Funcionando']));

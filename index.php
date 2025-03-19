@@ -26,6 +26,7 @@ $app->group('/user', function (RouteCollectorProxy $group) {
 
 $app->group('/auth', function (RouteCollectorProxy $group) {
     $group->post('/login', [AuthController::class, 'login']);
+    $group->post('/refresh-token', [AuthController::class, 'refreshToken']);
 });
 
 $app->group('/community', function (RouteCollectorProxy $group){

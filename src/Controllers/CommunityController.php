@@ -89,4 +89,57 @@ class CommunityController
         ]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $userId = $request->getAttribute('userId');
+        $communityId = $args['id'];
+
+        if (!$userId) {
+            $response->getBody()->write(json_encode(['error' => 'Usuário não autenticado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+
+        if (empty($data)) {
+            $response->getBody()->write(json_encode(['error' => 'Nenhum dado para atualizar']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $allowedFields = ['name', 'website', 'bio', 'city', 'uf', 'tags'];
+        $updateData = array_filter($data, fn($key) => in_array($key, $allowedFields), ARRAY_FILTER_USE_KEY);
+
+        if (empty($updateData)) {
+            $response->getBody()->write(json_encode(['error' => 'Nenhum campo permitido para atualização']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $community = Community::where('id', $communityId)
+                ->where('owner_id', $userId)
+                ->first();
+
+            if (!$community) {
+                $response->getBody()->write(json_encode(['error' => 'Comunidade não encontrada']));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+            }
+
+            foreach ($updateData as $key => $value) {
+                $community->$key = $value;
+            }
+
+            $community->save();
+
+            $response->getBody()->write(json_encode([
+                'message' => 'Dados da comunidade atualizadas com sucesso!'
+            ]));
+
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Erro ao atualizar dados', 'details' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
 }

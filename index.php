@@ -42,6 +42,8 @@ $app->group('/event', function (RouteCollectorProxy $group) {
    $group->post('', [EventController::class, 'create'])->add(new JwtMiddleware());
    $group->get('/community/{id}', [EventController::class, 'getByCommunityId']);
    $group->get('/{id}', [EventController::class, 'getById']);
+   $group->put('/{id}', [EventController::class, 'update'])->add(new JwtMiddleware());
+
 });
 
 $app->get('/', function ($request, $response, $args) {

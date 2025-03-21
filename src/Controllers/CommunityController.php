@@ -117,9 +117,9 @@ class CommunityController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-    public function getById(Request $request, Response $response): Response
+    public function getById(Request $request, Response $response, $args): Response
     {
-        $id = $request->getAttribute('id');
+        $id = $args['id'];
 
         if (!$id) {
             $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));

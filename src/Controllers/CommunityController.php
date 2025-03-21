@@ -35,7 +35,7 @@ class CommunityController
             ]);
 
             $response->getBody()->write(json_encode([
-                'message' => 'Comunidade criada com sucesso!',
+                'message' => 'Evento criado com sucesso!',
                 'community' => $community
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(201);

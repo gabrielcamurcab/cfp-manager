@@ -10,6 +10,7 @@ use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\CommunityController;
+use App\Controllers\EventController;
 use App\Middleware\JwtMiddleware;
 
 $app = AppFactory::create();
@@ -35,6 +36,10 @@ $app->group('/community', function (RouteCollectorProxy $group){
     $group->get('/{id}', [CommunityController::class, 'getById']);
     $group->get('/my/details', [CommunityController::class, 'getMy'])->add(new JwtMiddleware());
     $group->put('/{id}', [CommunityController::class, 'update'])->add(new JwtMiddleware());
+});
+
+$app->group('/event', function (RouteCollectorProxy $group) {
+   $group->post('', [EventController::class, 'create'])->add(new JwtMiddleware());
 });
 
 $app->get('/', function ($request, $response, $args) {

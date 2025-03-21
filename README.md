@@ -25,3 +25,19 @@ Ferramenta de gestão de Call-For-Papers para Comunidades.
     - GET /community/my/details
     - GET /community/{id}
     - PUT /community/{id}
+  - Criar
+    - Community
+      - GET /community/{id}/event
+    - Event
+      - POST /event
+      - GET /event/community/{id}
+      - GET /event/{id}
+      - GET /event/{id}/cfp
+      - PUT /event/{id}
+      - DELETE /event/{id}
+    - CFP
+      - POST /cfp
+      - PUT /cfp/{id}
+      - DELETE /cfp/{id}
+      - PUT /cfp/{id}/approve
+      - PUT /cfp/{id}/reprove

@@ -55,6 +55,9 @@ class EventController
         $id = $request->getAttribute('id');
         $page = $request->getQueryParams()["page"] ?? 1;
 
+        $limit = 10;
+        $offset = $limit * ($page-1);
+
         if (!$id) {
             $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
@@ -65,14 +68,46 @@ class EventController
                 'id',
                 'name',
                 'local',
+                'date'
+            )->orderBy('date');
+
+        $data = $query->limit($limit)->offset($offset)->get()->toArray();
+
+        $hasMore = Event::where('community_id', $id)
+            ->skip($offset + $limit)
+            ->take(1)
+            ->exists();
+
+        $response->getBody()->write(json_encode([
+            'data' => $data,
+            'page' => $page,
+            'hasMore' => $hasMore
+        ]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    public function getById(Request $request, Response $response): Response
+    {
+        $id = $request->getAttribute('id');
+
+        if (!$id) {
+            $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $data = Event::where('id', $id)
+            ->select(
+                'id',
+                'name',
+                'local',
                 'date',
                 'start_time',
                 'end_time',
                 'cfp_start_date',
                 'cfp_end_date',
-            )->orderBy('date')->get();
+            )->first();
 
-        $response->getBody()->write(json_encode($query));
+        $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

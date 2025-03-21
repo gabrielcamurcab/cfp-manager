@@ -49,4 +49,30 @@ class EventController
         ]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
     }
+
+    public function getByCommunityId(Request $request, Response $response): Response
+    {
+        $id = $request->getAttribute('id');
+        $page = $request->getQueryParams()["page"] ?? 1;
+
+        if (!$id) {
+            $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $query = Event::where('community_id', $id)
+            ->select(
+                'id',
+                'name',
+                'local',
+                'date',
+                'start_time',
+                'end_time',
+                'cfp_start_date',
+                'cfp_end_date',
+            )->orderBy('date')->get();
+
+        $response->getBody()->write(json_encode($query));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
 }

@@ -118,7 +118,7 @@ class EventController
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         if (!$id) {
-            $response->getBody()->write(json_encode(['error' => 'Informe a ID da comunidade.']));
+            $response->getBody()->write(json_encode(['error' => 'Informe a ID do evento.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
@@ -169,6 +169,41 @@ class EventController
         } catch (\Exception $e)
         {
             $response->getBody()->write(json_encode(['error' => 'Erro ao atualizar dados', 'details' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
+
+    public function delete(Request $request, Response $response, $args): Response
+    {
+        $id = $args['id'];
+        $userId = $request->getAttribute('userId');
+
+        if (!$id) {
+            $response->getBody()->write(json_encode(['error' => 'Informe a ID do evento.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try
+        {
+            $community = Community::where('owner_id', $userId)
+                ->select('id')
+                ->first();
+
+            if (!$community) {
+                $response->getBody()->write(json_encode(['error' => 'Não é possível atualizar esse evento.']));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+            }
+
+            $event = Event::where('id', $id)->delete();
+
+            $response->getBody()->write(json_encode([
+                'message' => 'Evento excluído com sucesso!'
+            ]));
+
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (\Exception $e)
+        {
+            $response->getBody()->write(json_encode(['error' => 'Erro ao deletar evento', 'details' => $e->getMessage()]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
     }

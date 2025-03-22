@@ -43,6 +43,7 @@ $app->group('/event', function (RouteCollectorProxy $group) {
    $group->get('/community/{id}', [EventController::class, 'getByCommunityId']);
    $group->get('/{id}', [EventController::class, 'getById']);
    $group->put('/{id}', [EventController::class, 'update'])->add(new JwtMiddleware());
+   $group->delete('/{id}', [EventController::class, 'delete'])->add(new JwtMiddleware());
 
 });
 
